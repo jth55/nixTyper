@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+	<title>nixTyper</title>
+	<style>
+		body {
+			background-color: antiquewhite;
+			font-family: sans-serif;
+			margin: auto;
+			width: 70%;
+		}		
+	</style>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+</head>
+
+<body>
+	<br>
+	<h1><i>nixTyper</i></h1>
+	<div id="codeBlock" style="outline: 3px solid black; padding: 10px; font-family: monospace; font-size: 1.5em;">
+	</div>
+		
+	<h2>WPM: ____</h2>
+	<div class="form-group">
+    		<label for="exampleFormControlTextarea1">Enter Commands Here:</label>
+		<!-- every time someone enters a character, runs through javascript function that checkes if it's the correct character. if so, keep moving and allow further keypresses. if not, make red and prevent further keypresses. -->
+    		<textarea type ="text" class="form-control" id="exampleFormControlTextarea1" rows="3" onkeyup="getKey()"></textarea>
+  	</div>
+	<div id="test"/>
+	<script>
+		var $ = function(id) {
+			return document.getElementById(id);
+		};
+		codeText = {{ bloc | safe }};
+		$("codeBlock").innerHTML = codeText[0];
+
+		function getKey() {
+			var key = $("exampleFormControlTextarea1").value;
+			$("test").innerHTML = key;
+			if 
+		}
+	</script>
+</body>
