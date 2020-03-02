@@ -1,0 +1,2 @@
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -p tcp -m multiport --dport 80,53,443 -j ACCEPT
