@@ -18,24 +18,90 @@
 	<div id="codeBlock" style="outline: 3px solid black; padding: 10px; font-family: monospace; font-size: 1.5em;">
 	</div>
 		
-	<h2>WPM: ____</h2>
+	<h2>WPM: </h2>
+	<div id = 'WPM'></div>
 	<div class="form-group">
-    		<label for="exampleFormControlTextarea1">Enter Commands Here:</label>
+    		<label for="textbox">Enter Commands Here:</label>
 		<!-- every time someone enters a character, runs through javascript function that checkes if it's the correct character. if so, keep moving and allow further keypresses. if not, make red and prevent further keypresses. -->
-    		<textarea type ="text" class="form-control" id="exampleFormControlTextarea1" rows="3" onkeyup="getKey()"></textarea>
+    		<textarea type ="text" class="form-control" id="textbox" rows="3" onkeypress="return getKey(event)"></textarea>
   	</div>
-	<div id="test"/>
+	<button id = "start" onclick="startGame()"></button>
+	<p id="test"> <p/>
+	<div id="check"> </div>
+	<div id="check1"> </div>
+	<div id="check2"> </div>
+	<div id="check3"> </div>
+	<div id="timer"> </div>
+
 	<script>
 		var $ = function(id) {
 			return document.getElementById(id);
 		};
-		codeText = {{ bloc | safe }};
-		$("codeBlock").innerHTML = codeText[0];
+		//codeText = {{ bloc | safe }};
+		//$("codeBlock").innerHTML = codeText[0];
+		//var prompt = codeText[0].split('');
+		//$("check").innerHTML = prompt[0];
 
-		function getKey() {
-			var key = $("exampleFormControlTextarea1").value;
+		codeText = {{ bloc | safe  }};
+		codeText = codeText.join("<br/>");
+		$("codeBlock").innerHTML = codeText;
+
+		var prompt = codeText.replace("<br/>", " ");
+		prompt = prompt.replace( /[\r\n]+/gm, "" );
+		prompt = prompt.split("");
+		var len = prompt.length;
+
+		$("check").innerHTML = len;
+		$("check1").innerHTML = prompt;
+
+		var seconds = 0;
+		setInterval(startGame, 1000);
+		var characters = 0;
+
+		function startGame() {
+			seconds++;
+			$("timer").innerHTML = seconds;
+			if (seconds > 180) {
+				endGame();
+			}
+			calcWPM(seconds);
+		}
+
+		function endGame() {
+			$("textbox").disabled="true";
+		}
+
+		function calcWPM () {
+			$("test").innerHTML = (characters / 5) / (seconds / 60);
+		}
+
+		function getKey(event) {
+			var len = prompt.length;
+			var size = $("textbox").value.length;
+
+			$("check2").innerHTML = size;
+
+			var box = $("textbox");
+			var key;
+                	key = event.keyCode; 
+			box = box.innerHTMl;
+			key = String.fromCharCode(key);
 			$("test").innerHTML = key;
-			if 
+
+			// Condition for end of game
+			if (size == len) {
+				endGame();
+				return 0;
+			}
+
+			while (key != prompt[size]) {
+				$("check3").innerHTML = "NOT RIGHT";
+				$("test").style.color = 'red';
+				getKey(event);
+			}
+
+			characters = size;
+			$("test").style.color = 'black';
 		}
 	</script>
 </body>
