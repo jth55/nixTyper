@@ -7,101 +7,224 @@
 			font-family: sans-serif;
 			margin: auto;
 			width: 70%;
-		}		
+		}
+		#show {
+			float: right;
+			padding-bottom: .5em;
+		}
+		#codeBlock {
+			clear: right;
+		}
+		#WPM {
+			float: left;
+		}
+		#time {
+			float: right;
+		}
+		#desc {
+			margin-top: 30px;
+			display: none;
+		}
 	</style>
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
 </head>
 
 <body>
 	<br>
 	<h1><i>nixTyper</i></h1>
-	<div id="codeBlock" style="outline: 3px solid black; padding: 10px; font-family: monospace; font-size: 1.5em;">
-	</div>
-		
-	<h2>WPM: </h2>
-	<div id = 'WPM'></div>
+	<a id="show" onclick="showmore()" href="#">Learn more about these commands</a>
+	<div id="codeBlock" style="outline: 3px solid black; padding: 10px; font-family: monospace; font-size: 1.5em;" onclick="startGame()"></div>
+	<h2 id = 'WPM'></h2>
+	<h2 id = 'time'></h2>
+	<div style="clear: both;"></div>
+	<p id="test"> <p/>
 	<div class="form-group">
     		<label for="textbox">Enter Commands Here:</label>
 		<!-- every time someone enters a character, runs through javascript function that checkes if it's the correct character. if so, keep moving and allow further keypresses. if not, make red and prevent further keypresses. -->
-    		<textarea type ="text" class="form-control" id="textbox" rows="3" onkeypress="return getKey(event)"></textarea>
+    		<textarea type ="text" class="form-control" id="textbox" rows="3" ></textarea>
   	</div>
-	<button id = "start" onclick="startGame()"></button>
-	<p id="test"> <p/>
 	<div id="check"> </div>
 	<div id="check1"> </div>
 	<div id="check2"> </div>
 	<div id="check3"> </div>
-	<div id="timer"> </div>
+	<div id="check4"> </div>
+	<div id="correct"></div>
+
+	<div id="desc" style="color: royalblue;"></div>
 
 	<script>
 		var $ = function(id) {
 			return document.getElementById(id);
 		};
-		//codeText = {{ bloc | safe }};
-		//$("codeBlock").innerHTML = codeText[0];
-		//var prompt = codeText[0].split('');
-		//$("check").innerHTML = prompt[0];
 
 		codeText = {{ bloc | safe  }};
+		description = {{ desc | safe }};
 		codeText = codeText.join("<br/>");
 		$("codeBlock").innerHTML = codeText;
+		description = description.join("<br/>");
+		$("desc").innerHTML = description;
 
-		var prompt = codeText.replace("<br/>", " ");
-		prompt = prompt.replace( /[\r\n]+/gm, "" );
+		function showmore () {
+			var hide = $("desc");
+
+			if (hide.style.display === "none") {
+				hide.style.display = "inline";
+			}
+			else {
+				hide.style.display = "none";
+			}
+		}
+
+		var prompt = codeText.replace(/<br\s*\/?>/ig, "");
 		prompt = prompt.split("");
 		var len = prompt.length;
 
 		$("check").innerHTML = len;
 		$("check1").innerHTML = prompt;
 
-		var seconds = 0;
-		setInterval(startGame, 1000);
-		var characters = 0;
+		//var seconds = 0;
+		var seconds = setInterval(startGame, 1000);
 
 		function startGame() {
 			seconds++;
-			$("timer").innerHTML = seconds;
+			$("time").innerHTML = "Time: " + seconds;
 			if (seconds > 180) {
 				endGame();
 			}
-			calcWPM(seconds);
+			//calcWPM(seconds);
 		}
 
 		function endGame() {
 			$("textbox").disabled="true";
+			clearInterval(seconds);
 		}
 
-		function calcWPM () {
-			$("test").innerHTML = (characters / 5) / (seconds / 60);
-		}
+		// function calcWPM (characters) {
+		// 	$("WPM").innerHTML = "WPM: " + (characters / 5) / (seconds / 60);
+		// }
 
-		function getKey(event) {
-			var len = prompt.length;
-			var size = $("textbox").value.length;
+		var correctCounter = 0;
+		var last = 1;
 
-			$("check2").innerHTML = size;
+		$("textbox").addEventListener('keyup', function (event) {
+			// Start game on click of input box
+			// Whenever a char is entered check to see if it matches prompt
+			// If it does, the user can continue entering characters that count towards progress
+			// If not, the user can still enter characters, but they don't count
+			// Maybe keep "correct count". Increments every time correct character is entered.
+			// If wrong character is entered this function doesn't increment.
+			// Problems: We can't go back very far. If we get up to letter A in Jake is Awesome, we can't delete until J, then continue again
 
-			var box = $("textbox");
-			var key;
-                	key = event.keyCode; 
-			box = box.innerHTMl;
-			key = String.fromCharCode(key);
+			//Problem with using text box size: No consequence for just typing "AAAAAAAAAAAAAAAAAAAAA"
+			// Would have to find a way to enforce so user can't enter another character until they type next in prompt
+
+			var key = event.key;
+			var keyChar = String.fromCharCode(key);
 			$("test").innerHTML = key;
+			var size = $("textbox").value.length - 1;
 
-			// Condition for end of game
-			if (size == len) {
-				endGame();
-				return 0;
-			}
-
-			while (key != prompt[size]) {
-				$("check3").innerHTML = "NOT RIGHT";
+			if (key != prompt[size]) {
 				$("test").style.color = 'red';
-				getKey(event);
+				// Try this: If the user enters a wrong key send the exact same index to compare for the next function call
+				correctCounter--;
+				$("correct").innerHTML = "Correct Counter: " + correctCounter;
+				event.preventDefault();
+				return;
 			}
 
-			characters = size;
-			$("test").style.color = 'black';
-		}
+			else {
+				$("test").style.color = 'black';
+				correctCounter++;
+			}
+
+			if (correctCounter < 0) {
+				correctCounter = 0;
+			}
+
+			$("correct").innerHTML = "Correct Counter: " + correctCounter;
+
+			// // MOSTLY WORKING
+			// var key = event.key;
+			// var keyChar = String.fromCharCode(key);
+			// $("test").innerHTML = key;
+			//
+			// if (last == 0) {
+			// 	if (key != "Backspace") {
+			// 		return;
+			// 	}
+			// 	else {
+			// 		last = 1;
+			// 		return;
+			// 	}
+			// }
+			//
+			// if (correctCounter == len - 1) {
+			// 	endGame();
+			// 	event.preventDefault();
+			// }
+			//
+			// else if (key == prompt[correctCounter]) {
+			// 	correctCounter++;
+			// 	$("test").style.color = 'black';
+			// 	last = 1;
+			// 	event.preventDefault();
+			// }
+			//
+			// else if (key == "Backspace") {
+			// 	if (last != 0) {
+			// 		correctCounter--;
+			// 	}
+			// 	event.preventDefault();
+			// }
+			//
+			// else if (key == "Shift") {
+			// 	return;
+			// }
+			//
+			// else {
+			// 	$("check3").innerHTML = "NOT RIGHT";
+			// 	$("test").style.color = 'red';
+			// 	last = 0;
+			// 	event.preventDefault();
+			// }
+			//
+			// if (correctCounter < 0) {
+			// 	correctCounter = 0;
+			// }
+			//
+			// $("correct").innerHTML = "Correct Counter: " + correctCounter;
+			// // END OF MOSTLY WORKING
+
+			// var len = prompt.length;
+			// var size = $("textbox").value.length;
+			//
+			// $("check2").innerHTML = size;
+			//
+			// //var box = $("textbox");
+			// var key;
+            //     	key = event.keyCode;
+			// //box = box.innerHTML;
+			// key = String.fromCharCode(key);
+			// $("test").innerHTML = key;
+			//
+			// // Condition for end of game
+			// if (size == len) {
+			// 	endGame();
+			// 	return 0;
+			// }
+			//
+			// while (key != prompt[size]) {
+			// 	$("check3").innerHTML = "NOT RIGHT";
+			// 	$("test").style.color = 'red';
+			// 	getKey(event);
+			// }
+			//
+			// if (size % 4 == 0) {
+			// 	calcWPM(size);
+			// }
+			//
+			// $("test").style.color = 'black';
+		})
 	</script>
 </body>
