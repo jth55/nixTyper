@@ -25,12 +25,14 @@
 			margin-top: 30px;
 			display: none;
 		}
+		#textbox {
+			width: 35em;
+			background-color: blanchedalmond;
+		}
 	</style>
-
-
 </head>
-
 <body>
+<div>
 	<br>
 	<h1><i>nixTyper</i></h1>
 	<a id="show" onclick="showmore()" href="#">Learn more about these commands</a>
@@ -42,7 +44,7 @@
 	<div class="form-group">
     		<label for="textbox">Enter Commands Here:</label>
 		<!-- every time someone enters a character, runs through javascript function that checkes if it's the correct character. if so, keep moving and allow further keypresses. if not, make red and prevent further keypresses. -->
-    		<textarea type ="text" class="form-control" id="textbox" rows="3" ></textarea>
+    		<textarea type ="text" class="form-control" id="textbox" rows="5" onclick="interval()" ></textarea>
   	</div>
 	<div id="check"> </div>
 	<div id="check1"> </div>
@@ -50,6 +52,7 @@
 	<div id="check3"> </div>
 	<div id="check4"> </div>
 	<div id="correct"></div>
+	<div id="numinbox"></div>
 
 	<div id="desc" style="color: royalblue;"></div>
 
@@ -76,15 +79,20 @@
 			}
 		}
 
-		var prompt = codeText.replace(/<br\s*\/?>/ig, "");
+		var prompt = codeText.replace(/<br\s*\/?>/gi, '');
+		prompt = prompt.replace(/\n/g, ' ');
+
 		prompt = prompt.split("");
 		var len = prompt.length;
 
-		$("check").innerHTML = len;
-		$("check1").innerHTML = prompt;
+		$("check").innerHTML = prompt;
+		$("check1").innerHTML = String.fromCharCode(prompt[9]);
 
-		//var seconds = 0;
-		var seconds = setInterval(startGame, 1000);
+		function interval () {
+			timer = setInterval(startGame, 1000);
+		}
+
+		var seconds = 0;
 
 		function startGame() {
 			seconds++;
@@ -92,50 +100,71 @@
 			if (seconds > 180) {
 				endGame();
 			}
-			//calcWPM(seconds);
+			calcWPM();
 		}
 
 		function endGame() {
 			$("textbox").disabled="true";
-			clearInterval(seconds);
+			clearInterval(timer);
 		}
 
-		// function calcWPM (characters) {
-		// 	$("WPM").innerHTML = "WPM: " + (characters / 5) / (seconds / 60);
-		// }
+		function calcWPM () {
+			$("WPM").innerHTML = "WPM: " + (correctCounter / 5) / (seconds / 60);
+		}
 
 		var correctCounter = 0;
-		var last = 1;
+		var correct = 1;
 
 		$("textbox").addEventListener('keyup', function (event) {
 			// Start game on click of input box
 			// Whenever a char is entered check to see if it matches prompt
 			// If it does, the user can continue entering characters that count towards progress
-			// If not, the user can still enter characters, but they don't count
-			// Maybe keep "correct count". Increments every time correct character is entered.
-			// If wrong character is entered this function doesn't increment.
-			// Problems: We can't go back very far. If we get up to letter A in Jake is Awesome, we can't delete until J, then continue again
-
-			//Problem with using text box size: No consequence for just typing "AAAAAAAAAAAAAAAAAAAAA"
-			// Would have to find a way to enforce so user can't enter another character until they type next in prompt
+			// If not, the user can still enter characters, but they don't count towards progress
 
 			var key = event.key;
-			var keyChar = String.fromCharCode(key);
-			$("test").innerHTML = key;
-			var size = $("textbox").value.length - 1;
+			$("test").innerHTML = $("textbox").value;
+			var size = $("textbox").value.length;
+			$("numinbox").innerHTML = "Chars in box: " + size;
 
-			if (key != prompt[size]) {
-				$("test").style.color = 'red';
-				// Try this: If the user enters a wrong key send the exact same index to compare for the next function call
-				correctCounter--;
-				$("correct").innerHTML = "Correct Counter: " + correctCounter;
-				event.preventDefault();
+			if (key === "Shift") {
 				return;
 			}
 
-			else {
-				$("test").style.color = 'black';
+			if (correct === 0) {
+				if (key === 'Backspace' && size <= correctCounter) {
+					$("test").style.color = 'black';
+					correct = 1;
+				}
+				else if (key === prompt[size]) {
+					correctCounter++;
+					$("test").style.color = 'black';
+					correct = 1;
+				}
+				return;
+			}
+
+			if (correctCounter === len - 1) {
+				endGame();
+				event.preventDefault();
+			}
+
+			else if (key === prompt[correctCounter]) {
 				correctCounter++;
+				$("test").style.color = 'black';
+				correct = 1;
+				event.preventDefault();
+			}
+
+			else if (key === "Backspace" || key === "CapsLock") {
+				correctCounter--;
+				event.preventDefault();
+			}
+
+			else {
+				$("check3").innerHTML = "NOT RIGHT";
+				$("test").style.color = 'red';
+				correct = 0;
+				event.preventDefault();
 			}
 
 			if (correctCounter < 0) {
@@ -143,88 +172,7 @@
 			}
 
 			$("correct").innerHTML = "Correct Counter: " + correctCounter;
-
-			// // MOSTLY WORKING
-			// var key = event.key;
-			// var keyChar = String.fromCharCode(key);
-			// $("test").innerHTML = key;
-			//
-			// if (last == 0) {
-			// 	if (key != "Backspace") {
-			// 		return;
-			// 	}
-			// 	else {
-			// 		last = 1;
-			// 		return;
-			// 	}
-			// }
-			//
-			// if (correctCounter == len - 1) {
-			// 	endGame();
-			// 	event.preventDefault();
-			// }
-			//
-			// else if (key == prompt[correctCounter]) {
-			// 	correctCounter++;
-			// 	$("test").style.color = 'black';
-			// 	last = 1;
-			// 	event.preventDefault();
-			// }
-			//
-			// else if (key == "Backspace") {
-			// 	if (last != 0) {
-			// 		correctCounter--;
-			// 	}
-			// 	event.preventDefault();
-			// }
-			//
-			// else if (key == "Shift") {
-			// 	return;
-			// }
-			//
-			// else {
-			// 	$("check3").innerHTML = "NOT RIGHT";
-			// 	$("test").style.color = 'red';
-			// 	last = 0;
-			// 	event.preventDefault();
-			// }
-			//
-			// if (correctCounter < 0) {
-			// 	correctCounter = 0;
-			// }
-			//
-			// $("correct").innerHTML = "Correct Counter: " + correctCounter;
-			// // END OF MOSTLY WORKING
-
-			// var len = prompt.length;
-			// var size = $("textbox").value.length;
-			//
-			// $("check2").innerHTML = size;
-			//
-			// //var box = $("textbox");
-			// var key;
-            //     	key = event.keyCode;
-			// //box = box.innerHTML;
-			// key = String.fromCharCode(key);
-			// $("test").innerHTML = key;
-			//
-			// // Condition for end of game
-			// if (size == len) {
-			// 	endGame();
-			// 	return 0;
-			// }
-			//
-			// while (key != prompt[size]) {
-			// 	$("check3").innerHTML = "NOT RIGHT";
-			// 	$("test").style.color = 'red';
-			// 	getKey(event);
-			// }
-			//
-			// if (size % 4 == 0) {
-			// 	calcWPM(size);
-			// }
-			//
-			// $("test").style.color = 'black';
 		})
 	</script>
+</div>
 </body>
