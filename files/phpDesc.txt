@@ -1,0 +1,6 @@
+These php options help thwart web shells and other methods of execution through malicious access to a PHP server.
+The most important ones are:
+	disable_functions = shell_exec, exec, passthru, proc_open, popen, system, phpinfo
+	max_execution_time = 3
+which disable common system execution functions, and which limit the time a process is running in PHP to three seconds respectively.
+

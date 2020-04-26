@@ -1,0 +1,2 @@
+All the flag names are pretty descriptive.
+These sysctl.conf (/etc/sysctl.conf) set more secure settings for IPv4 networking, and disable IPv6.

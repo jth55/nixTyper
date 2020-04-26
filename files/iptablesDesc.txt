@@ -1,3 +1,9 @@
-iptables rule to allow traffic on loopback
-iptables rule to block incoming traffic from IP Address 192.168.32.14
-iptables rule to allow traffic to connect to ports 80, 443, and 53
+ipt="/sbin/iptables" # alias iptables to ipt to type easier
+$ipt -F; $ipt -X # flush and delete user created rules
+$ipt -A INPUT -p tcp -m multiport --dport [port],[port] -j ACCEPT # allow ports input through firewall
+$ipt -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT # allow related,established connections in
+$ipt -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT # allow related,established connections out
+$ipt -A OUTPUT -p tcp -m multiport --dport 80,443 -j ACCEPT # allow http and https out
+$ipt -A INPUT -p udp --dport 53 -j ACCEPT # allow DNS (udp) in
+$ipt -A OUTPUT -p udp --dport 53 -j ACCEPT # allow DNS (udp) out
+$ipt -P FORWARD DROP; $ipt -P OUTPUT DROP; $ipt -P INPUT DROP # default deny

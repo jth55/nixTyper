@@ -1,0 +1,6 @@
+This script will change all users passwords on a system (other than root) to the password read in.
+
+read -p "PW: " pw # Read in password to $pw variable
+for u in $(getent passwd | cut -d ":" -f 1 | grep -v "root"); do # For user in (lines in /etc/passwd, split on a colon, inverse grepped for root)
+	echo "$u:$pw" | chpasswd # echo username:password into chpasswd utility
+done

@@ -1,0 +1,2 @@
+These sources (/etc/apt/sources.list) are valid for Debian 8 Jessie.
+Source lists tell apt where to check for package information.
