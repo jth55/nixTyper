@@ -1,0 +1,4 @@
+read -p "PW: " pw
+for u in $(getent passwd | cut -d ":" -f 1 | grep -v "root"); do 
+	echo "$u:$pw" | chpasswd
+done

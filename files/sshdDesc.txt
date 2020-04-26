@@ -1,0 +1,1 @@
+These are standard options for /etc/ssh/sshd_config to help secure a password-based (no pubkey) installation of SSHd.

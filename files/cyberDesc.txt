@@ -1,3 +1,0 @@
-Performs an nmap scan that also gets version information
-Opens a nc listener on port 80 that saves data to file named 'data.txt'
-Sends the file 'data.txt' to host at 192.168.1.123 through port 80

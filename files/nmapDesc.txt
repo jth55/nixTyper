@@ -1,0 +1,3 @@
+Performs a service script and versioning nmap scan for top 1000 ports on RHOST and backgrounds it
+Scans all ports as fast as possible (T5) on RHOST and backgrounds it
+Nmaps all UDP ports on RHOST and backgrounds it

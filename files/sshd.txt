@@ -1,0 +1,11 @@
+PermitRootLogin no
+PermitEmptyPasswords no
+PubkeyAuthentication no
+PasswordAuthentication yes
+Protocol 2
+X11Forwarding no
+IgnoreRhosts yes
+StrictModes yes
+PermitUserEnvironment no
+HostbasedAuthentication no
+AuthorizedKeysFile %h/.ssh/authorized_keys

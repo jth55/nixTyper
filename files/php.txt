@@ -1,0 +1,11 @@
+disable_functions = shell_exec, exec, passthru, proc_open, popen, system, phpinfo
+max_execution_time = 3
+register_globals = off
+magic_quotes_gpc = on
+allow_url_fopen = off
+allow_url_include = off
+display_errors = off
+short_open_tag = off
+session.cookie_httponly = 1
+session.use_only_cookies = 1
+session.cookie_secure = 1
