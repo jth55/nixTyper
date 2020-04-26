@@ -6,8 +6,8 @@ app = Flask(__name__)
 @app.route("/")
 def home():
 	ran = random.randint(0, 2)
-	files = ['files/iptables.txt', 'files/script.txt', 'files/misc.txt']
-	descFiles = ['files/iptablesDesc.txt', 'files/scriptDesc.txt', 'files/miscDesc.txt']
+	files = ['files/iptables.txt', 'files/cyber.txt', 'files/misc.txt']
+	descFiles = ['files/iptablesDesc.txt', 'files/cyberDesc.txt', 'files/miscDesc.txt']
 	with open(files[ran]) as f:
 	    bloc = f.readlines()
 	with open(descFiles[ran]) as f:

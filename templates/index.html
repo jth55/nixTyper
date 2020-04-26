@@ -29,6 +29,10 @@
 			width: 35em;
 			background-color: blanchedalmond;
 		}
+		.form-group {
+			margin-top: 3em;
+			margin-bottom: 2em;
+		}
 	</style>
 </head>
 <body>
@@ -40,20 +44,12 @@
 	<h2 id = 'WPM'></h2>
 	<h2 id = 'time'></h2>
 	<div style="clear: both;"></div>
-	<p id="test"> <p/>
+	<div id="display"></div>
 	<div class="form-group">
     		<label for="textbox">Enter Commands Here:</label>
 		<!-- every time someone enters a character, runs through javascript function that checkes if it's the correct character. if so, keep moving and allow further keypresses. if not, make red and prevent further keypresses. -->
     		<textarea type ="text" class="form-control" id="textbox" rows="5" onclick="interval()" ></textarea>
   	</div>
-	<div id="check"> </div>
-	<div id="check1"> </div>
-	<div id="check2"> </div>
-	<div id="check3"> </div>
-	<div id="check4"> </div>
-	<div id="correct"></div>
-	<div id="numinbox"></div>
-
 	<div id="desc" style="color: royalblue;"></div>
 
 	<script>
@@ -84,9 +80,6 @@
 
 		prompt = prompt.split("");
 		var len = prompt.length;
-
-		$("check").innerHTML = prompt;
-		$("check1").innerHTML = String.fromCharCode(prompt[9]);
 
 		function interval () {
 			timer = setInterval(startGame, 1000);
@@ -122,9 +115,8 @@
 			// If not, the user can still enter characters, but they don't count towards progress
 
 			var key = event.key;
-			$("test").innerHTML = $("textbox").value;
+			$("display").innerHTML = $("textbox").value;
 			var size = $("textbox").value.length;
-			$("numinbox").innerHTML = "Chars in box: " + size;
 
 			if (key === "Shift") {
 				return;
@@ -132,12 +124,12 @@
 
 			if (correct === 0) {
 				if (key === 'Backspace' && size <= correctCounter) {
-					$("test").style.color = 'black';
+					$("display").style.color = 'black';
 					correct = 1;
 				}
 				else if (key === prompt[size]) {
 					correctCounter++;
-					$("test").style.color = 'black';
+					$("display").style.color = 'black';
 					correct = 1;
 				}
 				return;
@@ -150,7 +142,7 @@
 
 			else if (key === prompt[correctCounter]) {
 				correctCounter++;
-				$("test").style.color = 'black';
+				$("display").style.color = 'black';
 				correct = 1;
 				event.preventDefault();
 			}
@@ -161,8 +153,7 @@
 			}
 
 			else {
-				$("check3").innerHTML = "NOT RIGHT";
-				$("test").style.color = 'red';
+				$("display").style.color = 'red';
 				correct = 0;
 				event.preventDefault();
 			}
@@ -170,8 +161,6 @@
 			if (correctCounter < 0) {
 				correctCounter = 0;
 			}
-
-			$("correct").innerHTML = "Correct Counter: " + correctCounter;
 		})
 	</script>
 </div>

@@ -1,2 +1,3 @@
-Hello world written in Bash
-Placeholder lol
+Bash Hello world
+Copies 'file.txt' to current directory
+Opens ssh config file with the superior text editor
