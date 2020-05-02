@@ -102,11 +102,13 @@
 		}
 
 		function calcWPM () {
-			$("WPM").innerHTML = "WPM: " + (correctCounter / 5) / (seconds / 60);
+			$("WPM").innerHTML = "WPM: " + parseInt((correctCounter / 5) / (seconds / 60));
 		}
 
 		var correctCounter = 0;
 		var correct = 1;
+		var match = 0;
+		var lastSize = 0;
 
 		$("textbox").addEventListener('keyup', function (event) {
 			// Start game on click of input box
@@ -118,16 +120,17 @@
 			$("display").innerHTML = $("textbox").value;
 			var size = $("textbox").value.length;
 
-			if (key === "Shift") {
+			if (key === "Shift" || key === "CapsLock") {
+				event.preventDefault();
 				return;
 			}
 
 			if (correct === 0) {
-				if (key === 'Backspace' && size <= correctCounter) {
-					$("display").style.color = 'black';
-					correct = 1;
+				if (key === "BackSpace") {
+					return;
 				}
-				else if (key === prompt[size]) {
+
+				else if (key === match && size === lastSize) {
 					correctCounter++;
 					$("display").style.color = 'black';
 					correct = 1;
@@ -135,32 +138,33 @@
 				return;
 			}
 
+			match = prompt[correctCounter];
+
 			if (correctCounter === len - 1) {
 				endGame();
-				event.preventDefault();
 			}
 
-			else if (key === prompt[correctCounter]) {
+			else if (key === match) {
 				correctCounter++;
 				$("display").style.color = 'black';
 				correct = 1;
-				event.preventDefault();
 			}
 
-			else if (key === "Backspace" || key === "CapsLock") {
+			else if (key === "Backspace") {
 				correctCounter--;
-				event.preventDefault();
 			}
 
-			else {
+			else if (key !== match) {
 				$("display").style.color = 'red';
+				lastSize = size;
 				correct = 0;
-				event.preventDefault();
 			}
 
 			if (correctCounter < 0) {
 				correctCounter = 0;
 			}
+
+			event.preventDefault();
 		})
 	</script>
 </div>
